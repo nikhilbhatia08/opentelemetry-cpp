@@ -1,14 +1,8 @@
 name: CI
 
 on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to run workflow on'
-        required: true
-        default: 'newb5'
   push:
-    branches: [ main ]
+    branches: [ main, newb5 ]
   pull_request:
     branches: [ main ]
 
