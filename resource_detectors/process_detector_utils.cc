@@ -7,8 +7,8 @@
 #include <string>
 
 #ifdef _MSC_VER
-#  include <psapi.h>
 #  include <windows.h>
+#  include <psapi.h>
 #else
 #  include <sys/types.h>
 #  include <unistd.h>
