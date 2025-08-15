@@ -7,10 +7,10 @@
 #include <string>
 
 #ifdef _MSC_VER
+#  pragma warning(disable : 4477)
 #  include <windows.h>
 #  include <psapi.h>
 #else
-#  pragma warning(disable:4477)
 #  include <sys/types.h>
 #  include <unistd.h>
 #  include <cstdio>
