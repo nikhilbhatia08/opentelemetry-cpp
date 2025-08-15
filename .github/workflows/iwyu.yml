@@ -3,7 +3,7 @@ name: include-what-you-use
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, newb5 ]
   pull_request:
     branches: [ main ]
 
