@@ -10,6 +10,7 @@
 #  include <windows.h>
 #  include <psapi.h>
 #else
+#  pragma warning(disable:4477)
 #  include <sys/types.h>
 #  include <unistd.h>
 #  include <cstdio>
