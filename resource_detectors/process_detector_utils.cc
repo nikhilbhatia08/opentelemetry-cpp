@@ -7,9 +7,10 @@
 #include <string>
 
 #ifdef _MSC_VER
-#  pragma warning(disable : 4477)
+// clang-format off
 #  include <windows.h>
 #  include <psapi.h>
+// clang-format on
 #else
 #  include <sys/types.h>
 #  include <unistd.h>
