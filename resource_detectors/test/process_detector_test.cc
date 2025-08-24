@@ -13,6 +13,7 @@
 #  include <windows.h>
 #  include <psapi.h>
 #  include <shellapi.h>
+#  pragma comment(lib, "shell32.lib")
 #  define getpid _getpid
 // clang-format on
 #else
@@ -126,7 +127,7 @@ TEST(ProcessDetectorUtilsTest, CommandTest)
   int32_t pid = getpid();
   std::string command;
 #ifdef _MSC_VER
-  int argc = 0;
+  int argc      = 0;
   LPWSTR *argvW = CommandLineToArgvW(GetCommandLineW(), &argc);
 
   if (argvW && argc > 0)
@@ -138,7 +139,7 @@ TEST(ProcessDetectorUtilsTest, CommandTest)
       WideCharToMultiByte(CP_UTF8, 0, argvW[0], -1, &arg[0], size_needed, NULL, NULL);
       command = arg;
     }
-    
+
     LocalFree(argvW);
   }
 #else
