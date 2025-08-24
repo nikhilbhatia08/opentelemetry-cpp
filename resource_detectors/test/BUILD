@@ -8,7 +8,6 @@ cc_test(
         "process_detector_test.cc",
     ],
     tags = ["test"],
-    linkopts = ["-lshell32"],
     deps = [
         "//api",
         "//resource_detectors",
