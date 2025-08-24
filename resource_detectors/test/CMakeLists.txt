@@ -7,7 +7,7 @@ add_executable(resource_detector_test container_detector_test.cc
 # Link the required dependencies
 target_link_libraries(
   resource_detector_test PRIVATE opentelemetry_resource_detectors
-                                 opentelemetry_api GTest::gtest_main)
+                                 opentelemetry_api GTest::gtest_main shell32)
 
 gtest_add_tests(
   TARGET resource_detector_test

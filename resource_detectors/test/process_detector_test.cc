@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <fstream>
 #include <string>
+#include <vector>
 
 #ifdef _MSC_VER
 // clang-format off
@@ -125,28 +126,20 @@ TEST(ProcessDetectorUtilsTest, CommandTest)
   int32_t pid = getpid();
   std::string command;
 #ifdef _MSC_VER
-  // On Windows, GetCommandLineW only works for the CURRENT process,
-  // so we ignore `pid` and just return the current process's command line.
-  LPCWSTR wcmd = GetCommandLineW();
-  if (!wcmd)
-  {
-    command = std::string();
-  }
-  else
-  {
+  int argc = 0;
+  LPWSTR *argvW = CommandLineToArgvW(GetCommandLineW(), &argc);
 
-    // Convert UTF-16 to UTF-8
-    int size_needed = WideCharToMultiByte(CP_UTF8, 0, wcmd, -1, NULL, 0, NULL, NULL);
-    if (size_needed <= 0)
+  if (argvW && argc > 0)
+  {
+    int size_needed = WideCharToMultiByte(CP_UTF8, 0, argvW[0], -1, NULL, 0, NULL, NULL);
+    if (size_needed > 0)
     {
-      command = std::string();
+      std::string arg(size_needed - 1, 0);
+      WideCharToMultiByte(CP_UTF8, 0, argvW[0], -1, &arg[0], size_needed, NULL, NULL);
+      command = arg;
     }
-    else
-    {
-      std::string utf8_command(size_needed - 1, 0);  // exclude null terminator
-      WideCharToMultiByte(CP_UTF8, 0, wcmd, -1, &utf8_command[0], size_needed, NULL, NULL);
-      command = utf8_command;
-    }
+    
+    LocalFree(argvW);
   }
 #else
   std::string command_line_path =
@@ -173,7 +166,7 @@ TEST(ProcessDetectorUtilsTest, GetCommandWithArgsTest)
   LPWSTR *argvW = CommandLineToArgvW(GetCommandLineW(), &argc);
   if (!argvW)
   {
-    return {};
+    args = {};
   }
 
   for (int i = 0; i < argc; i++)
