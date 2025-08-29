@@ -12,6 +12,7 @@
 #  include <windows.h>
 #  include <psapi.h>
 #  include <shellapi.h>
+#  pragma comment(lib, "shell32.lib")
 // clang-format on
 #else
 #  include <sys/types.h>
