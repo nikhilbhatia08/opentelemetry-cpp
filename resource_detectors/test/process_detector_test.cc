@@ -126,16 +126,16 @@ TEST(ProcessDetectorUtilsTest, CommandTest)
   std::vector<std::string> args;
   std::string command;
 #ifdef _MSC_VER
-  #  ifdef UNICODE
+#  ifdef UNICODE
   // UNICODE build → GetCommandLine() == GetCommandLineW()
   LPWSTR cmdLineW = GetCommandLine();
   if (!cmdLineW)
-    return {};
+    args = {};
 
   // Convert to UTF-8
   int size_needed = WideCharToMultiByte(CP_UTF8, 0, cmdLineW, -1, nullptr, 0, nullptr, nullptr);
   if (size_needed <= 0)
-    return {};
+    args = {};
 
   std::string cmdLine(size_needed - 1, 0);
   WideCharToMultiByte(CP_UTF8, 0, cmdLineW, -1, cmdLine.data(), size_needed, nullptr, nullptr);
@@ -151,7 +151,7 @@ TEST(ProcessDetectorUtilsTest, CommandTest)
   // MBCS (Multi-Byte) build → GetCommandLine() == GetCommandLineA()
   LPSTR cmdLine = GetCommandLine();
   if (!cmdLine)
-    return {};
+    args = {};
 
   std::istringstream iss(cmdLine);
   std::string arg;
@@ -164,7 +164,7 @@ TEST(ProcessDetectorUtilsTest, CommandTest)
   {
     command = args[0];
   }
-  else 
+  else
   {
     command = std::string();
   }
@@ -189,16 +189,16 @@ TEST(ProcessDetectorUtilsTest, GetCommandWithArgsTest)
   int32_t pid = getpid();
   std::vector<std::string> args;
 #ifdef _MSC_VER
-  #  ifdef UNICODE
+#  ifdef UNICODE
   // UNICODE build → GetCommandLine() == GetCommandLineW()
   LPWSTR cmdLineW = GetCommandLine();
   if (!cmdLineW)
-    return {};
+    args = {};
 
   // Convert to UTF-8
   int size_needed = WideCharToMultiByte(CP_UTF8, 0, cmdLineW, -1, nullptr, 0, nullptr, nullptr);
   if (size_needed <= 0)
-    return {};
+    args = {};
 
   std::string cmdLine(size_needed - 1, 0);
   WideCharToMultiByte(CP_UTF8, 0, cmdLineW, -1, cmdLine.data(), size_needed, nullptr, nullptr);
@@ -214,7 +214,7 @@ TEST(ProcessDetectorUtilsTest, GetCommandWithArgsTest)
   // MBCS (Multi-Byte) build → GetCommandLine() == GetCommandLineA()
   LPSTR cmdLine = GetCommandLine();
   if (!cmdLine)
-    return {};
+    args = {};
 
   std::istringstream iss(cmdLine);
   std::string arg;
