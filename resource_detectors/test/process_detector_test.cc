@@ -123,7 +123,7 @@ TEST(ProcessDetectorUtilsTest, GetExecutablePathTest)
 TEST(ProcessDetectorUtilsTest, CommandTest)
 {
   int32_t pid = getpid();
-  std::string command;
+  std::vector<std::string> args;
 #ifdef _MSC_VER
   #  ifdef UNICODE
   // UNICODE build → GetCommandLine() == GetCommandLineW()
