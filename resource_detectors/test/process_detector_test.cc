@@ -124,6 +124,7 @@ TEST(ProcessDetectorUtilsTest, CommandTest)
 {
   int32_t pid = getpid();
   std::vector<std::string> args;
+  std::string command;
 #ifdef _MSC_VER
   #  ifdef UNICODE
   // UNICODE build → GetCommandLine() == GetCommandLineW()
