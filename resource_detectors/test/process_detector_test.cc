@@ -125,22 +125,45 @@ TEST(ProcessDetectorUtilsTest, CommandTest)
   int32_t pid = getpid();
   std::string command;
 #ifdef _MSC_VER
-  int argc      = 0;
-  LPWSTR *argvW = CommandLineToArgvW(GetCommandLineW(), &argc);
+  #  ifdef UNICODE
+  // UNICODE build → GetCommandLine() == GetCommandLineW()
+  LPWSTR cmdLineW = GetCommandLine();
+  if (!cmdLineW)
+    return {};
 
-  if (argvW && argc > 0)
+  // Convert to UTF-8
+  int size_needed = WideCharToMultiByte(CP_UTF8, 0, cmdLineW, -1, nullptr, 0, nullptr, nullptr);
+  if (size_needed <= 0)
+    return {};
+
+  std::string cmdLine(size_needed - 1, 0);
+  WideCharToMultiByte(CP_UTF8, 0, cmdLineW, -1, cmdLine.data(), size_needed, nullptr, nullptr);
+
+  std::istringstream iss(cmdLine);
+  std::string arg;
+  while (iss >> arg)
   {
-    int size_needed = WideCharToMultiByte(CP_UTF8, 0, argvW[0], -1, NULL, 0, NULL, NULL);
-    if (size_needed > 0)
-    {
-      std::string arg(size_needed - 1, 0);
-      WideCharToMultiByte(CP_UTF8, 0, argvW[0], -1, &arg[0], size_needed, NULL, NULL);
-      command = arg;
-    }
-
-    LocalFree(argvW);
+    args.push_back(arg);
   }
-  else
+
+#  else
+  // MBCS (Multi-Byte) build → GetCommandLine() == GetCommandLineA()
+  LPSTR cmdLine = GetCommandLine();
+  if (!cmdLine)
+    return {};
+
+  std::istringstream iss(cmdLine);
+  std::string arg;
+  while (iss >> arg)
+  {
+    args.push_back(arg);
+  }
+#  endif
+  if (!args.empty())
+  {
+    command = args[0];
+  }
+  else 
   {
     command = std::string();
   }
@@ -165,28 +188,40 @@ TEST(ProcessDetectorUtilsTest, GetCommandWithArgsTest)
   int32_t pid = getpid();
   std::vector<std::string> args;
 #ifdef _MSC_VER
-  int argc      = 0;
-  LPWSTR *argvW = CommandLineToArgvW(GetCommandLineW(), &argc);
-  if (!argvW)
+  #  ifdef UNICODE
+  // UNICODE build → GetCommandLine() == GetCommandLineW()
+  LPWSTR cmdLineW = GetCommandLine();
+  if (!cmdLineW)
+    return {};
+
+  // Convert to UTF-8
+  int size_needed = WideCharToMultiByte(CP_UTF8, 0, cmdLineW, -1, nullptr, 0, nullptr, nullptr);
+  if (size_needed <= 0)
+    return {};
+
+  std::string cmdLine(size_needed - 1, 0);
+  WideCharToMultiByte(CP_UTF8, 0, cmdLineW, -1, cmdLine.data(), size_needed, nullptr, nullptr);
+
+  std::istringstream iss(cmdLine);
+  std::string arg;
+  while (iss >> arg)
   {
-    args = {};
-  }
-  else
-  {
-    for (int i = 0; i < argc; i++)
-    {
-      // Convert UTF-16 to UTF-8
-      int size_needed = WideCharToMultiByte(CP_UTF8, 0, argvW[i], -1, NULL, 0, NULL, NULL);
-      if (size_needed > 0)
-      {
-        std::string arg(size_needed - 1, 0);
-        WideCharToMultiByte(CP_UTF8, 0, argvW[i], -1, &arg[0], size_needed, NULL, NULL);
-        args.push_back(arg);
-      }
-    }
+    args.push_back(arg);
   }
 
-  LocalFree(argvW);
+#  else
+  // MBCS (Multi-Byte) build → GetCommandLine() == GetCommandLineA()
+  LPSTR cmdLine = GetCommandLine();
+  if (!cmdLine)
+    return {};
+
+  std::istringstream iss(cmdLine);
+  std::string arg;
+  while (iss >> arg)
+  {
+    args.push_back(arg);
+  }
+#  endif
 #else
   std::string command_line_path =
       opentelemetry::resource_detector::detail::FormFilePath(pid, "cmdline");
