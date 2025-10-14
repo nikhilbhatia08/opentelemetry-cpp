@@ -221,6 +221,6 @@ int main(int argc, char **argv)
     semconv_histogram_example.join();
   }
 
-  CleanupMetrics();
+  // CleanupMetrics();
   return 0;
 }
